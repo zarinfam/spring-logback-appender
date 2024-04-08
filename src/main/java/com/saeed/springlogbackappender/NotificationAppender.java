@@ -1,33 +1,26 @@
 package com.saeed.springlogbackappender;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
-import jakarta.annotation.PostConstruct;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NotificationAppender extends AppenderBase<ILoggingEvent> {
+public class NotificationAppender extends AppenderBase<ILoggingEvent> implements ApplicationContextAware {
 
-    private final Notifier notifier;
-
-    public NotificationAppender(Notifier notifier) {
-        this.notifier = notifier;
-    }
+    private static Notifier notifier;
 
     @Override
     protected void append(ILoggingEvent loggingEvent) {
-        notifier.notify(loggingEvent.getFormattedMessage());
+        if (notifier != null)
+            notifier.notify(loggingEvent.getFormattedMessage());
     }
 
-    @PostConstruct
-    public void init() {
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger rootLogger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
-        rootLogger.addAppender(this);
-        setContext(context);
-        start();
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        notifier = applicationContext.getAutowireCapableBeanFactory().getBean(Notifier.class);
     }
+
 }
