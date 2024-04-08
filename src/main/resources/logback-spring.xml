@@ -2,12 +2,12 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
-    <appender name="NOTIFY" class="com.saeed.springlogbackappender.NotificationAppender"/>
+    <appender name="DELEGATOR" class="com.saeed.springlogbackappender.AppenderDelegator"/>
 
     <logger name="org.springframework.web" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="NOTIFY" />
+        <appender-ref ref="DELEGATOR" />
     </root>
 </configuration>
